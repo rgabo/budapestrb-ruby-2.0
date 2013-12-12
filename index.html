@@ -51,8 +51,263 @@
 					<a href="http://secretsaucepartners.com"><img src="assets/ssp.png" width="64" height="64" /></a>
 				</section>
 
-			</div>
+				<section>
+					<h1>Timeline</h1>
+					<ul>
+						<li>Ruby 1.8: 2003 August</li>
+						<li>Ruby 1.9: 2007 December</li>
+						<li>Ruby 2.0.0-p0: 2013 February 24</li>
+						<li>Ruby 2.0.0-p195: 2013 May 14</li>
+						<li>Ruby 2.0.0-p247: 2013 June 27</li>
+						<li strong style="color:#bada55">Ruby 2.0.0-p353: 2013 November 22</li>
+            <li>Ruby 2.1.0-p0: 2013 December 25</li>
+					</ul>
+				</section>
 
+				<section>
+					<h1>Install</h1>
+					<h3>rvm</h3>
+					<pre>
+						<code>
+rvm install ruby-2.0.0
+						</code>
+					</pre>
+					<h3>rbenv</h3>
+					<pre>
+						<code>
+rbenv install 2.0.0-p353
+						</code>
+					</pre>
+				</section>
+
+				<section>
+					<h1>Compatibility</h1>
+					<img src="assets/chill.png" />
+				</section>
+
+        <section>
+          <h1>Deep changes</h1>
+        </section>
+
+        <section>
+          <h3>Bitmap garbage collection</h3>
+        </section>
+
+        <section>
+          <h3>Backwards compatible with 1.9</h3>
+        </section>
+
+        <section>
+          <h3>require() speed improvements</h3>
+        </section>
+
+				<section>
+					<h1>Big changes</h1>
+				</section>
+
+				<section>
+					<h1>Keyword arguments</h1>
+					<h3>today</h3>
+					<pre>
+						<code>
+def foo(foo: 'bar', baz: 'qux', **rest)
+  # TODO
+end
+
+foo(baz: 'qux', foo: 'frob')
+						</code>
+					</pre>
+					<h3>future</h3>
+					<pre>
+						<code>
+def foo(optional: 'default', required:)
+end
+						</code>
+					</pre>
+				</section>
+
+  			<section>
+					<h1>Prepend</h1>
+					<pre>
+						<code>
+module Foo
+  def somehing; end
+end
+
+class MyClass
+  prepend Foo
+end
+
+MyClass.ancestors # =>[Foo, MyClass, Object...]
+						</code>
+					</pre>
+					<small>No more <span style="color:#bada55">alias_method_chain</span></small>
+        </section>
+
+        <section>
+          <h1>Lazy enumerators</h1>
+          <pre>
+            <code>
+to_infinity = (0..Float::Infinity)
+
+beyond =to_infinity.lazy.select do |n|
+  num % 42 == 0
+end
+
+100.times do { |n| puts beyond.next }
+            </code>
+          </pre>
+          <h3>Enumerator#size</h3>
+          <pre>
+            <code>
+(1..100).to_a.permutation(4).size # => 94109400
+
+enum = Enumerator.new(3) do |yielder| ...; end
+
+def square_times(num)
+  return to_enum(:square_times) {num ** 2} unless block_given?
+  (num ** 2).times do |i|
+    yield i
+  end
+end
+            </code>
+          </pre>
+        </section>
+
+        <section>
+        <h1>Refinements</h1>
+        <pre>
+          <code>
+module Palindrome
+  refine String do
+    def palindrome?
+      self == self.reverse
+    end
+  end
+end
+
+using Palindrome # Monkey patchnow active for context
+
+"saippuakivikauppias".palindrome? # => true
+          </code>
+        </pre>
+        </section>
+
+        <section>
+          <h1>Small changes</h1>
+        </section>
+
+        <section>
+          <h1>Symbol array literal</h1>
+          <pre>
+            <code>
+%i[foo bar baz] # => [:foo, :bar, :baz]
+
+%I[#{1 + 1}x #{2 + 2}x]   #=> [:"2x", :"4x"]
+            </code>
+          </pre>
+        </section>
+
+        <section>
+          <h1>Binary search</h1>
+          <pre>
+            <code>
+haystack = (1..99999999)
+
+haystack.bsearch do |needle|
+  needle == 12345
+end
+
+# => 12345
+            </code>
+          </pre>
+        </section>
+
+        <section>
+          <h1>UTF8 by default</h1>
+          <h3>Ruby 1.9</h3>
+          <pre>
+            <code>
+#!/usr/bin/env ruby1.9
+#encoding: utf-8
+
+puts "★"
+            </code>
+          </pre>
+          <h3>Ruby 2.0</h3>
+          <pre>
+            <code>
+#!/usr/bin/env ruby-2.0
+
+puts "★"
+            </code>
+          </pre>
+
+        </section>
+
+        <section>
+          <h1>File directory</h1>
+          <pre>
+            <code>
+# Ruby 1.8
+require File.dirname(__FILE__) + "/lib"
+File.read(File.dirname(__FILE__) + "/.config")
+
+# Ruby 1.9
+require_relative 'lib'
+File.read(File.dirname(__FILE__) + '/.config')
+
+# Ruby 2.0
+require_relative 'lib'
+File.read(__dir__ + '/.config')
+            </code>
+          </pre>
+        </section>
+
+        <section>
+          <h1>to_h</h1>
+          <pre>
+            <code>
+Car = Struct.new(:make, :model, :year) do
+  def build
+    #...
+  end
+end
+car = Car.new('Toyota', 'Prius', 2014)
+car.to_h # => {:make=>"Toyota", :model=>"Prius", :year=>2014}
+nil.to_h # => {}
+            </code>
+          </pre>
+          <small>
+          <p>Implemented for:</p>
+          <ul>
+            <li>nil</li>
+            <li>Struct</li>
+            <li>OpenStruct</li>
+            <li style="text-decoration:line-through">Enumerable/Array</li>
+          </ul>
+          </small>
+          </section>
+
+          <section>
+            <h1>ETC</h1>
+            <p>
+              <ul>
+                <li>Unused variables can start with _</li>
+                <li>caller_locations</li>
+                <li>const_get understands namespaces</li>
+                <li>Rubygems Gemfile support</li>
+                <li>RDoc markdown support</li>
+              </ul>
+            </p>
+            <small><a href="http://globaldev.co.uk/2013/03/ruby-2-0-0-in-detail/">and many more...</a></small>
+          </section>
+
+          <section>
+            <h1>Thanks!</h1>
+            <img src="assets/great_gatsby.jpg" />
+          </section>
+			</div>
 		</div>
 
 		<script src="lib/js/head.min.js"></script>
